@@ -15,9 +15,9 @@ db.connect(function() {
 
 const questions = [
     {
-        type: 'list',
-        name: 'action',
-        message: 'What would you like to do?', 
+        type: "list",
+        name: "action",
+        message: "What would you like to do?", 
         choices:["View Departments", "View Roles", "View Employees", "Add Department", "Add Role", "Add Employee", "Update Employee"]
     }
 ]
@@ -52,7 +52,6 @@ function init() {
 }
 
 function viewDepartments() {
-    console.log('made it this far')
     db.query('SELECT * FROM department', (err, res) => {
         if (err) throw err
             console.table(res)
@@ -61,7 +60,6 @@ function viewDepartments() {
 }
 
 function viewRoles() {
-    console.log('made it this far')
     db.query('SELECT * FROM role', (err, res) => {
         if (err) throw err
             console.table(res)
@@ -70,7 +68,6 @@ function viewRoles() {
 }
 
 function viewEmployees() {
-    console.log('made it this far')
     db.query('SELECT * FROM employee', (err, res) => {
         if (err) throw err
             console.table(res)
@@ -78,6 +75,24 @@ function viewEmployees() {
     })
 }
 
+function addDepartment() {
+    db.query('SELECT * FROM department', (err, res) => {
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "name",
+                message: "What is the name of the department?"
+            },
+        ]).then(data => {
+            db.query("INSERT INTO department SET ?", 
+            {
+                name: data.name
+            })
+            console.log(`Added ${data.name} to the database` )
+            init()
+        })
+    })
+}
 
 function addRole(){
     db.query("SELECT * FROM department", (err, res)=>{
@@ -95,7 +110,7 @@ function addRole(){
             {
                 type: "list",
                 name:"depID",
-                message: "What is the department id for the new role?",
+                message: "What is the department for the new role?",
                 choices: res.map(department => department.name)
             },
         ]).then(data => {
@@ -112,8 +127,48 @@ function addRole(){
         })
     })
 }
-
 /// make sure in addEmployee to query role table first
+function addEmployee() {
+    db.query('SELECT * FROM role', (err, managers) => {
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "firstName",
+                message: "What is the employee's first name?"
+            },
+            {
+                type: "input",
+                name: "lastName",
+                message: "What is the employee's last name?"
+            },
+            {
+                type: "list",
+                name: "roleID",
+                message: "What is the new employee's role?",
+                choices: managers.map(role => role.name)
+            },
+            {
+                type: "list",
+                name: "managerID",
+                message: "Who is the employee's manager?",
+                choices: managers.map(manager => ({ name: `${manager.first_name} ${manager.last_name}`, value: manager.id}))
+            }
+        ]).then(data => {
+            let chosenRole = res.find(role => role.name === data.roleID)
+            let chosenManager = res.find(manager => manager.name === data.managerID)
+
+            db.query("INSERT INTO employee SET ?",
+            {
+                first_name: data.firstName,
+                last_name: data.lastName,
+                role_id: chosenRole.id,
+                manager_id: chosenManager.id
+            })
+            console.log(`Added ${data.firstName} ${data.lastName} to the database`)
+            init()
+        })
+    })
+}
 
 
 
