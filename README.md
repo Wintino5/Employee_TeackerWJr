@@ -5,7 +5,7 @@
 In this project we created an employee tracker. This assignment required us to use inquirer so that the user of our app could add roles, departments and employees to the database. Our app also allows people to view a list of employees, update employee roles and view roles and departments. This assignment was completed using JavaScript and MYSQL and it was very helpful in learning more about queries and databases
 ## Repository
 
-Link to deployed video: 
+Link to deployed video: https://drive.google.com/file/d/1hyAduGC6E8yr_smkBrLtQtWCLkZJVAvW/view
 
 ## Technologies
 
